@@ -95,14 +95,6 @@ def confirm_account(url, scraper):
     else:
         print(f"[X] Confirmation failed. Status: {resp.status_code}")
         return False
- 
-  
-    # if "You are now signed in" in resp.text:
-    #     print("[✓] Account confirmed and logged in.")
-    #     return True
-    # else:
-    #     print("[X] Confirmation failed.")
-    #     return False
 
 def save_account(identity, json_file="valid_accounts.txt", username_file="usernames.txt"):
     print(f"[💾] Saving to files: {identity['username']}")
@@ -111,17 +103,10 @@ def save_account(identity, json_file="valid_accounts.txt", username_file="userna
     with open(username_file, "a") as f:
         f.write(identity["username"] + "\n")
 
-def countdown(t):
-    while t:
-        mins, secs = divmod(int(t), 60)
-        print(f"    ⏳ Next account in {mins:02d}:{secs:02d}...", end="\r")
-        time.sleep(1)
-        t -= 1
-    print(" " * 40, end="\r")  # clear line
-
-def generate_bulk_accounts(count=3):
-    for i in range(count):
-        print(f"\n======= Account {i+1} of {count} =======")
+def generate_accounts_forever():
+    count = 1
+    while True:
+        print(f"\n======= Account {count} =======")
         try:
             identity = generate_random_identity()
             scraper = signup_with_temp_email(identity)
@@ -134,10 +119,9 @@ def generate_bulk_accounts(count=3):
                 save_account(identity)
         except Exception as e:
             print(f"[X] Exception occurred: {e}")
-
-        delay = random.uniform(10.0, 20.0)
-        print(f"[⏸] Cooling down for {int(delay)}s before next account.")
-        countdown(delay)
+        count += 1
+        print(f"[→] Waiting 5 seconds before next account...\n")
+        time.sleep(5)
 
 # Run it
-generate_bulk_accounts(count=5)
+generate_accounts_forever()
